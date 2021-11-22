@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+
+    "name": "Quick Dictionary",
+    "description": "This extension will give the definition of a word when double clicked",
+    "version": "1.0",
+    "icons":{
+        "32": "icon 32x32.png",
+        "64": "icon 64x64.png"
+    },
+    "browser_action": {
+        "default_icon": {"64": "icon 64x64.png"}
+    },
+    "permissions": ["activeTab"], 
+    "background": {
+        "scripts": ["background.js"]
+    }
+}
