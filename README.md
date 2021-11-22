@@ -1,4 +1,3 @@
-# Quick-Dictionary
-Chrome extension - Double click word to get it's definition.
+# YT-video-info
 
-API used: https://dictionaryapi.dev/
+Chrome extension - Display video data when youtube link is hovered.
