@@ -6,6 +6,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     if(enable){
         chrome.browserAction.setBadgeText({text: "on", tabId: tab.id})
         chrome.tabs.executeScript({file: "script.js"});
+        chrome.tabs.insertCSS({file:"style.css"});
 
     }else{
         // When extenision is disabled, send message to injected script to remove event listeners.

@@ -14,5 +14,8 @@
     "permissions": ["activeTab"], 
     "background": {
         "scripts": ["background.js"]
-    }
+    },
+    "web_accessible_resources": [
+        "secrets.json"
+    ]
 }

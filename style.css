@@ -1,0 +1,38 @@
+p {
+    opacity: 0.8;
+}
+
+.popup {
+    position: absolute;
+    min-width: 250px;
+    padding: 16px;
+    background: #342b49;
+    color: #ccc;
+    border: solid;
+    border-radius: 8px;
+    z-index: 9999;
+
+    transform: translateX(-50%);
+}
+
+.videoTitle {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.feedback {
+    display: flex;
+    font-size: 14px;
+}
+
+.likes {
+    margin-top: 8px;
+    color: transparent;
+    text-shadow: 0 0 0 green;
+}
+
+.dislikes {
+    margin: 8px;
+    color: transparent;
+    text-shadow: 0 0 0 red;
+}
