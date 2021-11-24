@@ -1,6 +1,6 @@
 function getParsedDuration(duration) {
-    let durationArray = duration.slice(2).split("");
-    durationArray = durationArray.map(value => Number(value) || value)
+    let durationArray = duration.slice(2).split(""); // Removes the two first digits and turns fetched duration into string
+    durationArray = durationArray.map(value => Number(value) || value) // turns string digits to int
 
     let time = ""
     let parsedDuration = ""
@@ -9,14 +9,14 @@ function getParsedDuration(duration) {
             time += element
 
         } else {
-            parsedDuration += ('0' + time).slice(-2)
+            parsedDuration += ('0' + time).slice(-2) // Adds zero before number if number is single digit
             parsedDuration += ":"
 
             time = ""    
         }
     })
 
-    return parsedDuration.slice(0, -1)
+    return parsedDuration.slice(0, -1) // Slice will remore last ":" from string
 }
 
 function getDetails(channelTitle, date, duration, viewCount){
@@ -36,7 +36,7 @@ function getDetails(channelTitle, date, duration, viewCount){
     details.appendChild(publishDate);
 
     var views = document.createElement("p");
-    views.innerText = 'Views: ' + Number(viewCount).toLocaleString();
+    views.innerText = 'Views: ' + Number(viewCount).toLocaleString(); //toLocaleString adds dots to number for better a format
     details.appendChild(views);
 
     return details
@@ -52,8 +52,9 @@ function getStats(likeCount, dislikeCount){
     var dislikes = document.createElement("p");
     dislikes.classList.add("dislikes");
 
-    likes.innerText = '👍' + Number(likeCount).toLocaleString();;
-    dislikes.innerText = '👎' + Number(dislikeCount).toLocaleString();;
+    //toLocaleString adds dots to number for better a format
+    likes.innerText = '👍' + Number(likeCount).toLocaleString();
+    dislikes.innerText = '👎' + Number(dislikeCount).toLocaleString();
 
     stats.appendChild(likes);
     stats.appendChild(dislikes);
@@ -71,19 +72,26 @@ function createPopup(element, title, details, stats) {
     var videoTitle = document.createElement("h3");
     videoTitle.innerText = title;
     videoTitle.classList.add("videoTitle");
-    popup.appendChild(videoTitle);
 
+    popup.appendChild(videoTitle);
     popup.appendChild(details);
     popup.appendChild(stats);
     
-    // Gets word selection coordinates to place the popup near it.
-    var popupTop = (elementRect.top + window.scrollY + 40);   // Window.scrollY is needed here since elementRect returns the value in relation to the viewport instead of whole page.
+    // Gets link coordinates to place the popup near it.
+    // Window.scrollY is needed here since elementRect returns the value in relation to the viewport instead of whole page.
+    var popupTop  = (elementRect.top + window.scrollY + 40);   
     var popupLeft = (elementRect.left + (elementRect.width/2));
-    popup.style.top     = popupTop + 'px';
-    popup.style.left    = popupLeft + 'px';
+    popup.style.top  = popupTop + 'px';
+    popup.style.left = popupLeft + 'px';
+
+    // These will prevent the popup window from going outside the page.
     if (popup.getBoundingClientRect().left < 0) {
-        // This will prevent the popup window from going outside the page.
         popupLeft += ((popup.offsetWidth/2) - (elementRect.width/2));
+        popup.style.left = popupLeft + 'px'; 
+    }
+
+    if (popup.getBoundingClientRect().right > document.body.offsetWidth) {
+        popupLeft -= popup.getBoundingClientRect().right - document.body.offsetWidth;
         popup.style.left = popupLeft + 'px'; 
     }
 
@@ -124,6 +132,8 @@ function getDataHandler(event) {
     var target = event.target
     if (target && target.tagName == 'A') {
         var href = target.getAttribute('href');
+
+        // Covers the main situations that a link can be found in the page (Hopefully).
         var videoID = href.replace("https://", "")
                         .replace("http://", "")
                         .replace("www.", "")
@@ -143,7 +153,3 @@ chrome.runtime.onMessage.addListener((message) => {
         document.body.removeEventListener('mouseover', getDataHandler, true);
     }
 });
-
-// TODO
-//   Fix popup out of screen
-//   Better Css
