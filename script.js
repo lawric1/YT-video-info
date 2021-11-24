@@ -129,6 +129,7 @@ function getDataHandler(event) {
                         .replace("www.", "")
                         .replace("youtube.com/", "")
                         .replace("youtu.be/", "")
+                        .replace("/watch?v=", "")
                         .replace("watch?v=", "");
 
         getData(videoID, target);   
