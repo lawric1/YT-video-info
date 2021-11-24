@@ -90,7 +90,8 @@ function getDataHandler(event) {
     if (target && target.tagName == 'A') {
         var href = target.getAttribute('href');
         var videoID = href.replace("/watch?v=", "")
-        getData(videoID, target);    }
+        getData(videoID, target);    
+    }
 }
 
 document.body.addEventListener('mouseover', getDataHandler, true);
