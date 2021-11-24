@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
 
-    "name": "Quick Dictionary",
-    "description": "This extension will give the definition of a word when double clicked",
+    "name": "YT video info",
+    "description": "This extension will give youtube video details when link is hovered",
     "version": "1.0",
     "icons":{
         "32": "icon 32x32.png",

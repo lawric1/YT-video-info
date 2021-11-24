@@ -1,4 +1,67 @@
-function createPopup(element, title, channelTitle, date, duration, viewCount, likeCount, dislikeCount) {
+function getParsedDuration(duration) {
+    let durationArray = duration.slice(2).split("");
+    durationArray = durationArray.map(value => Number(value) || value)
+
+    let time = ""
+    let parsedDuration = ""
+    durationArray.forEach(element => {
+        if (typeof element == "number"){
+            time += element
+
+        } else {
+            parsedDuration += ('0' + time).slice(-2)
+            parsedDuration += ":"
+
+            time = ""    
+        }
+    })
+
+    return parsedDuration.slice(0, -1)
+}
+
+function getDetails(channelTitle, date, duration, viewCount){
+    let details = document.createElement("div");
+
+    var channel = document.createElement("p");
+    channel.innerText = 'Channel: ' + channelTitle;
+    details.appendChild(channel);
+
+    var videoDuration = document.createElement("p");
+    duration = getParsedDuration(duration);
+    videoDuration.innerText = 'Duration: ' + duration;
+    details.appendChild(videoDuration);
+
+    var publishDate = document.createElement("p");
+    publishDate.innerText = 'Published: ' + date;
+    details.appendChild(publishDate);
+
+    var views = document.createElement("p");
+    views.innerText = 'Views: ' + Number(viewCount).toLocaleString();
+    details.appendChild(views);
+
+    return details
+}
+
+function getStats(likeCount, dislikeCount){
+    var stats = document.createElement("div");
+    stats.classList.add("stats");
+
+    var likes = document.createElement("p");
+    likes.classList.add("likes");
+
+    var dislikes = document.createElement("p");
+    dislikes.classList.add("dislikes");
+
+    likes.innerText = '👍' + Number(likeCount).toLocaleString();;
+    dislikes.innerText = '👎' + Number(dislikeCount).toLocaleString();;
+
+    stats.appendChild(likes);
+    stats.appendChild(dislikes);
+
+    return stats
+}
+
+function createPopup(element, title, details, stats) {
     var elementRect = element.getBoundingClientRect();
 
     var popup = document.createElement("div");
@@ -10,40 +73,9 @@ function createPopup(element, title, channelTitle, date, duration, viewCount, li
     videoTitle.classList.add("videoTitle");
     popup.appendChild(videoTitle);
 
-    var channel = document.createElement("p");
-    channel.innerText = 'Channel: ' + channelTitle;
-    popup.appendChild(channel);
-
-    var videoDuration = document.createElement("p");
-    videoDuration.innerText = 'Duration: ' + duration;
-    popup.appendChild(videoDuration);
-
-    var publishDate = document.createElement("p");
-    publishDate.innerText = 'Published: ' + date;
-    popup.appendChild(publishDate);
-
-    var views = document.createElement("p");
-    views.innerText = 'Views: ' + viewCount;
-    popup.appendChild(views);
-
-    var feedback = document.createElement("div");
-    feedback.classList.add("feedback");
-    var likes = document.createElement("p");
-    likes.classList.add("likes");
-    var dislikes = document.createElement("p");
-    dislikes.classList.add("dislikes");
-
-    likes.innerText = '👍' + likeCount;
-    dislikes.innerText = '👎' + dislikeCount;
-
-    feedback.appendChild(likes);
-    feedback.appendChild(dislikes);
-
-    popup.appendChild(feedback);
-
-    // var meanings = getMeanings(data);
-    // popup.appendChild(meanings);
-
+    popup.appendChild(details);
+    popup.appendChild(stats);
+    
     // Gets word selection coordinates to place the popup near it.
     var popupTop = (elementRect.top + window.scrollY + 40);   // Window.scrollY is needed here since elementRect returns the value in relation to the viewport instead of whole page.
     var popupLeft = (elementRect.left + (elementRect.width/2));
@@ -62,9 +94,9 @@ function createPopup(element, title, channelTitle, date, duration, viewCount, li
 
 async function getData(id, element) {
     // Fetches data from API.
-    var secrets = await fetch(chrome.extension.getURL('/secrets.json')).then(Response => {return Response.json()});
 
     try {
+        let secrets = await fetch(chrome.extension.getURL('/secrets.json')).then(Response => {return Response.json()});
         let url = 'https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=contentDetails&part=statistics&id=' + id + '&key=' + secrets["API"]
         const data = await fetch(url).then(Response => {return Response.json()});
 
@@ -80,7 +112,10 @@ async function getData(id, element) {
         let likeCount = statistics['likeCount'];
         let dislikeCount = statistics['dislikeCount'];
 
-        createPopup(element, title, channelTitle, date, duration, viewCount, likeCount, dislikeCount);
+        let details = getDetails(channelTitle, date, duration, viewCount);
+        let stats = getStats(likeCount, dislikeCount);
+
+        createPopup(element, title, details, stats);
 
     } catch(e) {console.log(e)}
 }
@@ -89,8 +124,14 @@ function getDataHandler(event) {
     var target = event.target
     if (target && target.tagName == 'A') {
         var href = target.getAttribute('href');
-        var videoID = href.replace("/watch?v=", "")
-        getData(videoID, target);    
+        var videoID = href.replace("https://", "")
+                        .replace("http://", "")
+                        .replace("www.", "")
+                        .replace("youtube.com/", "")
+                        .replace("youtu.be/", "")
+                        .replace("watch?v=", "");
+
+        getData(videoID, target);   
     }
 }
 
@@ -101,3 +142,7 @@ chrome.runtime.onMessage.addListener((message) => {
         document.body.removeEventListener('mouseover', getDataHandler, true);
     }
 });
+
+// TODO
+//   Fix popup out of screen
+//   Better Css

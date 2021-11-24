@@ -18,7 +18,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     }
 });
 
-// // Reloads extension when switching pages for quick debug.
-// chrome.tabs.onActivated.addListener(() => {
-//     chrome.runtime.reload()
-// });
+// Reloads extension when switching pages for quick debug.
+chrome.tabs.onActivated.addListener(() => {
+    chrome.runtime.reload()
+});

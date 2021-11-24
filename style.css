@@ -20,7 +20,7 @@ p {
     font-weight: bold;
 }
 
-.feedback {
+.stats {
     display: flex;
     font-size: 14px;
 }
